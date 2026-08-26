@@ -23,29 +23,29 @@ const sketch = (p) => {
     walker.step();
     walker.show();
   };
-
-  class Walker {
-    constructor(p) {
-      // Access width/height via the sketch instance 'p'
-      this.p = p;
-      this.x = p.width / 2;
-      this.y = p.height / 2;
-    }
-
-    show() {
-      this.p.stroke(0);
-      this.p.point(this.x, this.y);
-    }
-
-    step() {
-      // Any floating-point number from –1 to 1
-      let xstep = this.p.random(-1, 1);
-      let ystep = this.p.random(-1, 1);
-
-      this.x += xstep;
-      this.y += ystep;
-    }
-  }
 };
+
+
+export class Walker {
+  constructor() {
+    // Access width/height via the sketch instance 'p'
+    this.x = width / 2;
+    this.y = height / 2;
+  }
+
+  show() {
+    this.stroke(0);
+    this.point(this.x, this.y);
+  }
+
+  step() {
+    // Any floating-point number from –1 to 1
+    let xstep = this.random(-1, 1);
+    let ystep = this.random(-1, 1);
+
+    this.x += xstep;
+    this.y += ystep;
+  }
+}
 
 new p5(sketch);
