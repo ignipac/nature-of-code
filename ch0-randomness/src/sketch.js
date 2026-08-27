@@ -9,29 +9,54 @@ debug.classList.add("debug");
 // Append to the document
 document.body.appendChild(debug);
 
-// States
+// Objects
 let splatter;
+
+// Controls - Sliders
+let posSpreadSlider;
+let hue_slider;
+let baseHueSlider;
+let hueSpreadSlider;
+let alphaSlider;
+
+// Controls - Buttons
+let isActive = true;
+
+
+function toggleSplatter() {
+  isActive = !isActive
+  console.log(isActive)
+}
 
 // Hooking into the p5 framework
 function setup() {
   createCanvas(800, 500);
   background(255);
 
+  let stopButton = createButton("On / Off ");
+  stopButton.position(100, height + 200);
+  stopButton.mousePressed(this.toggleSplatter);
+
   splatter = new PaintSplatter()
-  splatter.enter()
+  splatter.createControls()
 }
 
+
 function draw() {
+  if (!isActive) return;
   splatter.update()
 }
 
-let h_slider;
-let v_slider;
 
 class PaintSplatter {
   // props
   x = width / 2;
   y = height / 2;
+
+  paintHue;
+  paintSat;
+  paintBright;
+
 
   // state to pass when instancing
   constructor() {
@@ -39,27 +64,62 @@ class PaintSplatter {
   }
 
   enter() {
-    h_slider = createSlider(0, 100, 50, 1);
-    h_slider.position(100, height + 100);
-    h_slider.size(100);
-    console.log(h_slider.value())
+
+  }
+
+  createControls() {
+    posSpreadSlider = createSlider(0, 100, 50, 1);
+    posSpreadSlider.position(100, height + 100);
+    posSpreadSlider.size(100);
+
+    baseHueSlider = createSlider(0, 100, 50, 1);
+    baseHueSlider.position(200, height + 100);
+    baseHueSlider.size(100);
+
+    hueSpreadSlider = createSlider(0, 100, 50, 1);
+    hueSpreadSlider.position(300, height + 100);
+    hueSpreadSlider.size(100);
+
+    alphaSlider = createSlider(0, 100, 50, 1);
+    alphaSlider.position(400, height + 100);
+    alphaSlider.size(100);
+
+
+
   }
 
   update() {
-    this.splat()
-    this.show()
+    this.splat();
+    this.show();
   }
 
   show() {
-    stroke(255);
-    fill(0);
+    noStroke();
+    fill(this.paintHue, this.paintSat, this.paintBright, alphaSlider.value());
     circle(this.x, this.y, 10);
   }
 
   splat() {
-    this.x = randomGaussian(width/2, h_slider.value());
-    this.y = randomGaussian(height/2, 50);
+    this.x = randomGaussian(width / 2, posSpreadSlider.value());
+    this.y = randomGaussian(height / 2, posSpreadSlider.value());
+
+    this.paintHue = randomGaussian(baseHueSlider.value(), hueSpreadSlider.value());
+    this.paintSat = randomGaussian(80, 20);
+    this.paintBright = randomGaussian(80, 20);
+
+    if (this.paintHue < 0) {
+      this.paintHue += 360;
+    } else if (this.paintHue >= 360) {
+      this.paintHue -= 360;
+    }
+    if (this.paintSat > 100) {
+      this.paintSat = 100;
+    }
+    if (this.paintBright > 100) {
+      this.paintBright = 100;
+    }
   }
+
 
 }
 
