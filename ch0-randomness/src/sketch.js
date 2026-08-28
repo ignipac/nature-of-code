@@ -23,9 +23,8 @@ let alphaSlider;
 let isActive = true;
 
 
-function toggleSplatter() {
+function toggleLiveSketch() {
   isActive = !isActive
-  console.log(isActive)
 }
 
 // Hooking into the p5 framework
@@ -35,10 +34,10 @@ function setup() {
 
   let stopButton = createButton("On / Off ");
   stopButton.position(100, height + 200);
-  stopButton.mousePressed(this.toggleSplatter);
+  stopButton.mousePressed(toggleLiveSketch);
 
   splatter = new PaintSplatter()
-  splatter.createControls()
+  splatter.enter()
 }
 
 
@@ -47,7 +46,7 @@ function draw() {
   splatter.update()
 }
 
-
+// Exercise 4: Paint splatter simultaion as collection of colored dots
 class PaintSplatter {
   // props
   x = width / 2;
@@ -64,28 +63,39 @@ class PaintSplatter {
   }
 
   enter() {
-
+    this.createControls()
   }
 
   createControls() {
+    let xAnchor = 25;
+    let yAnchor = height + 25;
+
+    let cLabel = createP("Paint Splatter Simulation");
+    cLabel.position(xAnchor, yAnchor);
+
+    xAnchor += 25
+    yAnchor += 50
+
+    let spreadLabel = createP("Spread");
+    spreadLabel.position(xAnchor, yAnchor)
+
+    yAnchor += 50
+
     posSpreadSlider = createSlider(0, 100, 50, 1);
-    posSpreadSlider.position(100, height + 100);
+    posSpreadSlider.position(xAnchor, yAnchor);
     posSpreadSlider.size(100);
 
-    baseHueSlider = createSlider(0, 100, 50, 1);
+    baseHueSlider = createSlider(0, 255, 100, 1);
     baseHueSlider.position(200, height + 100);
     baseHueSlider.size(100);
 
-    hueSpreadSlider = createSlider(0, 100, 50, 1);
+    hueSpreadSlider = createSlider(0, 255, 100, 1);
     hueSpreadSlider.position(300, height + 100);
     hueSpreadSlider.size(100);
 
-    alphaSlider = createSlider(0, 100, 50, 1);
+    alphaSlider = createSlider(0, 255, 255, 1);
     alphaSlider.position(400, height + 100);
     alphaSlider.size(100);
-
-
-
   }
 
   update() {
