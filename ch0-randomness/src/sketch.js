@@ -33,12 +33,19 @@ function setup() {
   createCanvas(800, 500);
   background(255);
 
+
+
   // way to decide if code in draw call should run or exit early
   let onOffButton = createButton("On / Off ");
-  onOffButton.position(100, height + 200);
+  onOffButton.parent(debug)
+
+  onOffButton.position(0, height + 10);
   onOffButton.mousePressed(toggleLiveSketch);
 
   perlinNoiseWalker.enter()
+
+  land = new Terrain(20, 800, 400)
+  console.log(land)
 }
 
 function draw() {

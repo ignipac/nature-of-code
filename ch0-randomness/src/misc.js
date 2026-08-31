@@ -4,8 +4,6 @@ import { greet } from './utils';
 // No import for p5 statement needed here.
 // p5 is automatically available as a global variable.
 
-
-
 console.log(greet("world"))
 
 let walker;
