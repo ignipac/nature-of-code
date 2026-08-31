@@ -23,4 +23,4 @@ done <<< "$staged_changes"
 
 # Subject = timestamp only, body = details
 git commit -m "auto commit $(date '+%b %d, %Y, %H:%M:%S')" -m "$body"
-# git push
+git push

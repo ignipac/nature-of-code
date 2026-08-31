@@ -27,24 +27,67 @@ function toggleLiveSketch() {
   isActive = !isActive
 }
 
+
 // Hooking into the p5 framework
 function setup() {
   createCanvas(800, 500);
   background(255);
 
-  let stopButton = createButton("On / Off ");
-  stopButton.position(100, height + 200);
-  stopButton.mousePressed(toggleLiveSketch);
+  // way to decide if code in draw call should run or exit early
+  let onOffButton = createButton("On / Off ");
+  onOffButton.position(100, height + 200);
+  onOffButton.mousePressed(toggleLiveSketch);
 
-  splatter = new PaintSplatter()
-  splatter.enter()
+  perlinNoiseWalker.enter()
 }
-
 
 function draw() {
   if (!isActive) return;
-  splatter.update()
+
+  perlinNoiseWalker.update()
+  perlinNoiseWalker.show()
 }
+
+const perlinNoiseWalker = {
+  t: 0,
+  n: 0,
+  x: 0,
+
+  // note: give access to obj props using this, anoymous function will not
+  enter: function () {
+    this.x = width/2
+  },
+  show: function () {
+    noFill()
+    background(255)
+    circle(this.x, height / 2, 20)
+
+  },
+  update: function () {
+    this.n = noise(this.t);
+    this.x += map(this.n, 0, 1, -1, 1);
+    // this.x = map(this.n, 0, 1, 0, width) // assign the new pos
+    this.t += 0.01;
+  }
+}
+
+// Custom distribution of random numbers
+function monteCarlo() {
+  // Do this “forever” until you find a qualifying random value.
+  while (true) { // graph y = x
+    // Pick a random value.
+    let r1 = random(1);
+    // Assign a probability.
+    let probability = r1;
+    // Pick a second random value.
+    let r2 = random(1);
+    // Does it qualify?  If so, you’re done!
+    if (r2 < probability) {
+      return r1;
+    }
+  }
+}
+
 
 // Exercise 4: Paint splatter simultaion as collection of colored dots
 class PaintSplatter {
@@ -129,8 +172,6 @@ class PaintSplatter {
       this.paintBright = 100;
     }
   }
-
-
 }
 
 class Walker {
