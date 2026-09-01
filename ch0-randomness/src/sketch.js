@@ -30,7 +30,7 @@ function toggleLiveSketch() {
 
 // Hooking into the p5 framework
 function setup() {
-  createCanvas(800, 500);
+  createCanvas(800, 500, WEBGL);
   background(255);
 
 
@@ -42,18 +42,34 @@ function setup() {
   onOffButton.position(0, height + 10);
   onOffButton.mousePressed(toggleLiveSketch);
 
-  perlinNoiseWalker.enter()
 
-  land = new Terrain(20, 800, 400)
-  console.log(land)
+  terrain = new Terrain(20, 800, 400)
+  land["terrain"] = terrain
 }
 
 function draw() {
   if (!isActive) return;
 
-  perlinNoiseWalker.update()
-  perlinNoiseWalker.show()
+  land.terrain.calculate();
+  background(255);
+  push();
+  translate(0, 20, -200);
+  rotateX(PI / 3);
+  rotateZ(land.theta);
+  land.terrain.render();
+  pop();
+
+  land.theta += 0.0025;
+
+
 }
+
+const land = {
+  terrain: {}, // the issue with not instancing the terrain obj here is the canvas needs to be ready for the terrian to render
+  theta: 0.0
+}
+
+
 
 const perlinNoiseWalker = {
   t: 0,

@@ -17,3 +17,10 @@ to package.json
 to use p5 in js script import it like all js/code libraries
 
 then `npm run dev` to see code changes
+
+
+### Project Ideas
+**Think of a project to work over the course of the book** 
+
+#### Suggested: Ecosystem Project
+1. simulate a real-world behaviour of a creature
