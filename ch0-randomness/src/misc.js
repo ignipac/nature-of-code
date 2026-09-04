@@ -4,6 +4,12 @@ import { greet } from './utils';
 // No import for p5 statement needed here.
 // p5 is automatically available as a global variable.
 
+
+// import p5 from "https://cdn.jsdelivr.net/npm/p5@2.3.1/lib/p5.min.js"
+// import p5Sound from "https://cdn.jsdelivr.net/npm/p5.sound@0.4.1/+esm"
+
+
+
 console.log(greet("world"))
 
 let walker;
