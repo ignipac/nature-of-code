@@ -1,4 +1,13 @@
 {
+  "name": "creative-code-project",
+  "displayName": "Creative Code Project",
+  "description": "",
+  "author": {
+    "name": ""
+  },
+  "version": "",
+  "icon": "",
+  "repository": {},
   "scripts": {
     "dev": "vite"
   },

@@ -8,6 +8,7 @@ console.log(greet("world"))
 
 let walker;
 
+
 const sketch = (p) => {
   p.setup = () => {
     // This canvas size is used to accommodate the book’s layout but isn’t critical for the examples otherwise.
