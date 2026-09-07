@@ -33,4 +33,4 @@ done <<< "$staged_changes"
 
 # Commit and push
 git commit -m "$commit_msg" -m "$body"
-# git push
+git push
