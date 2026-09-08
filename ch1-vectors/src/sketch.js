@@ -4,20 +4,21 @@ import { Block } from './block';
 const sketches = document.getElementById('sketches')
 
 new p5((p) => { // p - processing in-built functions
-  let cols; let rows; let cellSize = 50;
+  let cols; let rows; let cellSize = 10;
 
   // Objects
   let blocks = [];
   let ball;
 
   p.setup = () => {
-    p.createCanvas(400, 400)
+    p.createCanvas(500, 500) // only works for 1:1 aspect ratio
     p.rectMode(p.CENTER)
     p.angleMode(p.DEGREES)
 
     rows = p.width / cellSize
     cols = p.height / cellSize
 
+    // this may be why only 1:1 aspect ratio
     for (let i = 0; i < cols; i++) {
       blocks[i] = [];
       for (let j = 0; j < rows; j++){
@@ -50,7 +51,7 @@ new p5((p) => { // p - processing in-built functions
   }
 
   p.draw = () => {
-    p.background('white') // clear previous draw
+    p.background('black') // clear previous draw
     // ball.display()
     // ball.bounce()
 
