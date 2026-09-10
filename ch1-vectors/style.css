@@ -5,4 +5,9 @@ html, body {
 }
 canvas {
   display: block;
+  padding: 5px;
+}
+
+button {
+    margin: 0px 5px;
 }

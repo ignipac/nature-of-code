@@ -39,12 +39,12 @@ export class Block {
     // If squares are already rotating, keep rotating until angle = 90
     if (this.angle > 0 && this.angle < 90) {
       this.angle += 1;
-      // if (this.c > 70) {
-      //   this.c -= 3 // gradual fade of color to default
-      // }
+      if (this.c > 70) {
+        this.c -= 3 // gradual fade of color to default
+      }
     } else {
       this.angle = 0;
-      // this.c = 70;
+      this.c = 70;
     }
   }
 
@@ -58,3 +58,5 @@ export class Block {
     this.p.line(margin + this.size - this.padding / 2, margin + this.padding / 2, margin + this.padding / 2, margin + this.size - this.padding / 2);
   }
 }
+
+
