@@ -8,6 +8,13 @@ canvas {
   padding: 5px;
 }
 
+#sketches {
+    display: grid;
+    grid-template-columns: repeat(2, 400px);
+    column-gap: 25px;;
+}
+
 button {
     margin: 0px 5px;
+
 }
