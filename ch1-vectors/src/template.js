@@ -1,6 +1,9 @@
 new p5((p) => {
   let hasBeenStarted = false;
   let isPaused = false
+  let isReadyForInputs = false
+  let maxDelay = 500;
+  let delay = 0
 
   function userInterface() {
     let sketchCell = p.createDiv()
@@ -34,11 +37,23 @@ new p5((p) => {
 
   p.draw = () => {
     if (isPaused) return;
-
+    delay += p.deltaTime
+    
     // Draw logic here...
 
     if (!hasBeenStarted) {
       isPaused = true
+      delay = 0
+    } else {
+      if (delay > maxDelay) {
+        isReadyForInputs = true
+      }
     }
   }
+
+  p.mouseClicked = () => {
+    if (!isReadyForInputs) return
+    // initial input recieved
+  }
+
 }, sketches)

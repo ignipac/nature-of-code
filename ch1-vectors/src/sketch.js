@@ -2,7 +2,106 @@ import p5 from 'p5'
 
 // for each sketch pass a different p5 obj for the sketch to modify, for color, canvas
 // this each p5 is it's own img/resource
+
 const sketches = document.getElementById('sketches')
+
+// explore the idea of acceleration with perlin noise...and wrapping around canvas
+new p5((p) => {
+  let hasBeenStarted = false;
+  let isPaused = false
+  let isReadyForInputs = false
+  let maxDelay = 500;
+  let delay = 0
+
+  let center;
+  let mover;
+
+  function userInterface() {
+    let sketchCell = p.createDiv()
+    sketchCell.addClass('sketch')
+    p.createCanvas(400, 400).parent(sketchCell) // 1:1 aspect ratio
+
+    p.rectMode(p.CENTER)
+    p.angleMode(p.DEGREES)
+
+    const controls = p.createDiv().parent(sketchCell)
+    const playButton = p.createButton("Play")
+    const pauseButton = p.createButton("Pause")
+
+    controls.child(playButton)
+    controls.child(pauseButton)
+
+    playButton.mousePressed(() => {
+      hasBeenStarted = true
+      isPaused = false
+    })
+
+    pauseButton.mousePressed(() => {
+      isPaused = !isPaused
+    })
+  }
+
+  p.setup = () => {
+    userInterface()
+
+    center = p.createVector(p.width / 2, p.height / 2)
+
+    // Objects
+    mover = {
+      pos: p.createVector(center.x, center.y),
+      dir: p.createVector(0, 0),
+      maxSpeed: 2,
+      vel: p.createVector(0, 0),
+      accel: p.createVector(0, 0),
+      accelRate: 0.1,
+
+      update: function () {
+        mover.pos.add(mover.vel)
+      },
+      show: function () {
+        p.push()
+        p.fill('mintcream')
+        p.noStroke()
+        p.circle(this.pos.x, this.pos.y, 50)
+        p.pop()
+
+      }
+    }
+    // setup logic...
+  }
+
+  p.draw = () => {
+    if (isPaused) return;
+    delay += p.deltaTime
+
+    p.background('midnightblue')
+
+    // Draw logic here...
+    let mousePos = p.createVector(p.mouseX, p.mouseY)
+    mover.dir = p5.Vector.sub(mousePos, mover.pos).normalize()
+    mover.vel = p5.Vector.mult(mover.dir, mover.maxSpeed)
+    mover.update()
+    mover.show()
+
+
+    if (!hasBeenStarted) {
+      isPaused = true
+      delay = 0
+    } else {
+      if (delay > maxDelay) {
+        isReadyForInputs = true
+      }
+    }
+  }
+
+  p.mouseClicked = () => {
+    if (!isReadyForInputs) return
+    // initial input recieved
+
+  }
+
+}, sketches)
+
 
 // bouncing ball with choosing the start launch direction and speed
 new p5((p) => { // p - processing in-built functions
