@@ -5,6 +5,57 @@ import p5 from 'p5'
 
 const sketches = document.getElementById('sketches')
 
+
+new p5((p) => {
+  let hasBeenStarted = true;
+
+  let t = 0;
+  let x = 0;
+  let y = 0;
+
+  p.setup = () => {
+    let sketchCell = p.createDiv()
+    sketchCell.addClass('sketch')
+    p.createCanvas(400, 400).parent(sketchCell)
+
+    const controls = p.createDiv().parent(sketchCell)
+    const playButton = p.createButton("Play")
+
+    controls.child(playButton)
+
+    playButton.mousePressed(() => {
+      hasBeenStarted = true
+    })
+
+    p.background('gainsboro')
+
+    p.describe('A hilly terrain drawn in gray against a black sky.');
+  }
+
+  p.draw = () => {
+    if (!hasBeenStarted) return;
+
+    // Set the noise level and scale.
+    let noiseLevel = p.height;
+    let noiseScale = 0.02; // scales down the noise values to be closer together for smoother transition
+
+    // Scale the input coordinate.
+    let nt = noiseScale * t;
+
+    // Compute the noise value.
+    y = noiseLevel * p.noise(nt);
+    if (y < p.width) {
+      t += 1
+    }
+
+    // Draw the line.
+    p.line(t, 0, t, y);
+}
+
+
+}, sketches)
+
+
 // explore the idea of acceleration with perlin noise...and wrapping around canvas
 new p5((p) => {
   let hasBeenStarted = false;
@@ -15,6 +66,10 @@ new p5((p) => {
 
   let center;
   let mover;
+  let tx = 0; //time passed
+  let ty = 10000; //time passed
+  let randomX = 0;
+  let randomY = 0;
 
   function userInterface() {
     let sketchCell = p.createDiv()
@@ -47,16 +102,19 @@ new p5((p) => {
     center = p.createVector(p.width / 2, p.height / 2)
 
     // Objects
+    // Limit to using p5 only when show and the rest being data owned by obj
     mover = {
       pos: p.createVector(center.x, center.y),
       dir: p.createVector(0, 0),
-      maxSpeed: 2,
+      maxSpeed: 5,
       vel: p.createVector(0, 0),
       accel: p.createVector(0, 0),
       accelRate: 0.1,
 
       update: function () {
-        mover.pos.add(mover.vel)
+        this.vel.add(this.accel)
+        this.vel.limit(this.maxSpeed)
+        this.pos.add(this.vel)
       },
       show: function () {
         p.push()
@@ -64,7 +122,20 @@ new p5((p) => {
         p.noStroke()
         p.circle(this.pos.x, this.pos.y, 50)
         p.pop()
+      },
 
+      checkEdges: function () {
+        if (this.pos.x > p.width) {
+          this.pos.x = 0;
+        } else if (this.pos.x < 0) {
+          this.pos.x = p.width;
+        }
+
+        if (this.pos.y > p.height) {
+          this.pos.y = 0;
+        } else if (this.pos.y < 0) {
+          this.pos.y = p.height;
+        }
       }
     }
     // setup logic...
@@ -77,10 +148,17 @@ new p5((p) => {
     p.background('midnightblue')
 
     // Draw logic here...
-    let mousePos = p.createVector(p.mouseX, p.mouseY)
-    mover.dir = p5.Vector.sub(mousePos, mover.pos).normalize()
-    mover.vel = p5.Vector.mult(mover.dir, mover.maxSpeed)
+    // let mousePos = p.createVector(p.mouseX, p.mouseY)
+
+    randomX = p.noise(tx)
+    randomY = p.noise(ty)
+    let newThrust = p.createVector(randomX, randomY).mult(mover.accel)
+    mover.accel = p5.Vector.random2D()
+    mover.accel.mult(p.random(randomX))
+    tx += 0.01
+    ty += 0.01
     mover.update()
+    mover.checkEdges()
     mover.show()
 
 
@@ -97,7 +175,6 @@ new p5((p) => {
   p.mouseClicked = () => {
     if (!isReadyForInputs) return
     // initial input recieved
-
   }
 
 }, sketches)
@@ -124,9 +201,11 @@ new p5((p) => { // p - processing in-built functions
     const controls = p.createDiv().parent(sketchCell)
     const playButton = p.createButton("Play")
     const pauseButton = p.createButton("Pause")
+    const resetButton = p.createButton("Reset")
 
     controls.child(playButton)
     controls.child(pauseButton)
+    controls.child(resetButton)
 
     playButton.mousePressed(() => {
       hasBeenStarted = true
@@ -135,6 +214,16 @@ new p5((p) => { // p - processing in-built functions
 
     pauseButton.mousePressed(() => {
       isPaused = !isPaused
+    })
+
+    // to reset you need an init function or reset each variable to start of sketch before interacting with it
+    resetButton.mousePressed(() => {
+      ball.hasBeenLaunched = false
+      ball.hasSetStartVel = false
+      ball.pos = p.createVector(p.width / 2, p.height / 2)
+      ball.dir = p.createVector(0, 0)
+      delay = 0
+      isReadyForInputs = false
     })
   }
 
