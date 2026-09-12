@@ -19,12 +19,21 @@ new p5((p) => {
     p.createCanvas(400, 400).parent(sketchCell)
 
     const controls = p.createDiv().parent(sketchCell)
-    const playButton = p.createButton("Play")
+    const playButton = p.createButton('Play')
+    const resetButton = p.createButton('Reset')
 
     controls.child(playButton)
+    controls.child(resetButton)
 
     playButton.mousePressed(() => {
       hasBeenStarted = true
+    })
+
+    resetButton.mousePressed(() => {
+      let randomSeed = p.random(0, 10000)
+      p.noiseSeed(randomSeed)
+      p.background('gainsboro')
+      t = 0
     })
 
     p.background('gainsboro')
@@ -44,6 +53,7 @@ new p5((p) => {
 
     // Compute the noise value.
     y = noiseLevel * p.noise(nt);
+
     if (y < p.width) {
       t += 1
     }
