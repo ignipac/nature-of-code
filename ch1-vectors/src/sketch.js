@@ -7,8 +7,7 @@ const sketches = document.getElementById('sketches')
 
 // gravitational attraction attempt
 new p5((p) => {
-  let isPaused = false
-  let maxDistance = 100;
+  let isPaused = true;
   let mover;
 
   const labels = {}
@@ -43,10 +42,11 @@ new p5((p) => {
     createButtons(sketch)
     p.background('midnightblue')
     mover = new Mover(p)
+    mover.show(p)
 
     labelDiv = p.createDiv().parent(sketch)
     sketch.addClass(labels)
-    p.createP("Text Here").parent(labelDiv).id('label1')
+    p.createP("gravitational effect: ").parent(labelDiv).id('label1')
     label1 = document.getElementById('label1')
   }
 
@@ -60,15 +60,23 @@ new p5((p) => {
     let mouseDist = p5.Vector.sub(mousePos, mover.pos).mag()
     let mouseDir = p5.Vector.sub(mousePos, mover.pos).normalize()
 
-    let gravitationEffect = mouseDist / maxDistance
+    // can add maxDistance for it to have no effect after a range
+    // let maxDistance = 400
+    // let effectRange = mouseDist / maxDistance
+    let gravitationEffect = (1 / mouseDist) // scale down the effect
 
-    mover.accel = mouseDir.mult(mover.maxAccel)
 
-    label1.innerHTML = `gravitational effect: ${gravitationEffect.toFixed(2)}`
+    if (mouseDist <= maxDistance) {
+      mover.maxAccel = 50
+      mover.accel = mouseDir.mult(mover.maxAccel * gravitationEffect)
+    }
 
+    label1.innerHTML = `gravitational effect: ${gravitationEffect.toFixed()}`
 
+    mover.update(p)
     mover.checkEdges(p)
     mover.show(p)
+
   }
 
 }, sketches)
