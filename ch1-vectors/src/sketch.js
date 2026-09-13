@@ -14,7 +14,6 @@ new p5((p) => {
   let labelDiv;
   let label1;
 
-
   function createButtons(div) {
     const buttons = p.createDiv().parent(div)
 
@@ -30,10 +29,6 @@ new p5((p) => {
       isPaused = true
     })
   }
-  // function createStatusDisplay(div) {
-  //   const statusDisplay = p.createDiv().parent(div)
-  // }
-
   p.setup = () => {
     let sketch = p.createDiv()
     sketch.addClass('sketch')
@@ -434,28 +429,27 @@ new p5((p) => {
     })
   }
 
-  p.draw = () => {
-    if (isPaused) return;
-
-    p.background(255) //white
-    let mouse = p.createVector(p.mouseX, p.mouseY);
-    let center = p.createVector(p.width / 2, p.height / 2)
-
-    // display changes
-    p.stroke(0) // black
-    p.strokeWeight(4)
-    p.line(0, 0, center.x, center.y)
-    p.line(0, 0, mouse.x, mouse.y);
-
-    mouse.sub(center)
-    p.translate(center.x, center.y) // get local points from center of canvas
-    p.line(0, 0, mouse.x, mouse.y)
-
-    if (!hasBeenStarted) {
-      isPaused = true
+    p.draw = () => {
+      if (isPaused) return;
+  
+      p.background(255) //white
+      let mouse = p.createVector(p.mouseX, p.mouseY);
+      let center = p.createVector(p.width / 2, p.height / 2)
+  
+      // display changes
+      p.stroke(0) // black
+      p.strokeWeight(4)
+      p.line(0, 0, center.x, center.y)
+      p.line(0, 0, mouse.x, mouse.y);
+  
+      mouse.sub(center)
+      p.translate(center.x, center.y) // get local points from center of canvas
+      p.line(0, 0, mouse.x, mouse.y)
+  
+      if (!hasBeenStarted) {
+        isPaused = true
+      }
     }
-  }
-
 }, sketches)
 
 // bouncing ball sketch to group related by using vectors

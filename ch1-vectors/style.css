@@ -3,6 +3,7 @@ html, body {
   padding: 0px;
   background-color: lightgrey;
 }
+
 canvas {
   display: block;
   padding: 5px;

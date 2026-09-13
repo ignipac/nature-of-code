@@ -3,6 +3,14 @@ html, body {
   padding: 0px;
   background-color: lightgrey;
 }
+
 canvas {
   display: block;
+  padding: 5px;
+}
+
+#sketches {
+    display: grid;
+    grid-template-columns: repeat(3, 400px);
+    column-gap: 25px;
 }
