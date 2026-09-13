@@ -5,9 +5,77 @@ import p5 from 'p5'
 
 const sketches = document.getElementById('sketches')
 
-
+// gravitational attraction attempt
 new p5((p) => {
-  let hasBeenStarted = true;
+  let isPaused = false
+  let maxDistance = 100;
+  let mover;
+
+  const labels = {}
+  let labelDiv;
+  let label1;
+
+
+  function createButtons(div) {
+    const buttons = p.createDiv().parent(div)
+
+    const playButton = p.createButton("Play")
+    buttons.child(playButton)
+    playButton.mousePressed(() => {
+      isPaused = false
+    })
+
+    const pauseButton = p.createButton("Pause")
+    buttons.child(pauseButton)
+    pauseButton.mousePressed(() => {
+      isPaused = true
+    })
+  }
+  // function createStatusDisplay(div) {
+  //   const statusDisplay = p.createDiv().parent(div)
+  // }
+
+  p.setup = () => {
+    let sketch = p.createDiv()
+    sketch.addClass('sketch')
+    // parent the p5 canvas to div with class attribute 'sketch'
+    p.createCanvas(400, 400).parent(sketch) // 1:1 aspect ratio
+    createButtons(sketch)
+    p.background('midnightblue')
+    mover = new Mover(p)
+
+    labelDiv = p.createDiv().parent(sketch)
+    sketch.addClass(labels)
+    p.createP("Text Here").parent(labelDiv).id('label1')
+    label1 = document.getElementById('label1')
+  }
+
+  p.draw = () => {
+    if (isPaused) return;
+
+    p.background('midnightblue')
+
+    // Draw logic here...
+    let mousePos = p.createVector(p.mouseX, p.mouseY)
+    let mouseDist = p5.Vector.sub(mousePos, mover.pos).mag()
+    let mouseDir = p5.Vector.sub(mousePos, mover.pos).normalize()
+
+    let gravitationEffect = mouseDist / maxDistance
+
+    mover.accel = mouseDir.mult(mover.maxAccel)
+
+    label1.innerHTML = `gravitational effect: ${gravitationEffect.toFixed(2)}`
+
+
+    mover.checkEdges(p)
+    mover.show(p)
+  }
+
+}, sketches)
+
+// review noise generation, learn about noise scaling to make the transition more smooth
+new p5((p) => {
+  let hasBeenStarted = false;
 
   let t = 0;
   let x = 0;
@@ -30,8 +98,7 @@ new p5((p) => {
     })
 
     resetButton.mousePressed(() => {
-      let randomSeed = p.random(0, 10000)
-      p.noiseSeed(randomSeed)
+      p.noiseSeed(p.random(0, 10000))
       p.background('gainsboro')
       t = 0
     })
@@ -60,11 +127,8 @@ new p5((p) => {
 
     // Draw the line.
     p.line(t, 0, t, y);
-}
-
-
+  }
 }, sketches)
-
 
 // explore the idea of acceleration with perlin noise...and wrapping around canvas
 new p5((p) => {
@@ -80,8 +144,10 @@ new p5((p) => {
   let ty = 10000; //time passed
   let randomX = 0;
   let randomY = 0;
+  let tm = 5000;
+  let noiseScale = 0.02
 
-  function userInterface() {
+  function UI() {
     let sketchCell = p.createDiv()
     sketchCell.addClass('sketch')
     p.createCanvas(400, 400).parent(sketchCell) // 1:1 aspect ratio
@@ -107,7 +173,7 @@ new p5((p) => {
   }
 
   p.setup = () => {
-    userInterface()
+    UI()
 
     center = p.createVector(p.width / 2, p.height / 2)
 
@@ -119,7 +185,7 @@ new p5((p) => {
       maxSpeed: 5,
       vel: p.createVector(0, 0),
       accel: p.createVector(0, 0),
-      accelRate: 0.1,
+      size: 50,
 
       update: function () {
         this.vel.add(this.accel)
@@ -130,20 +196,20 @@ new p5((p) => {
         p.push()
         p.fill('mintcream')
         p.noStroke()
-        p.circle(this.pos.x, this.pos.y, 50)
+        p.circle(this.pos.x, this.pos.y, this.size)
         p.pop()
       },
 
       checkEdges: function () {
-        if (this.pos.x > p.width) {
+        if (this.pos.x - this.size/2 > p.width) {
           this.pos.x = 0;
-        } else if (this.pos.x < 0) {
+        } else if (this.pos.x + this.size/2 < 0) {
           this.pos.x = p.width;
         }
 
-        if (this.pos.y > p.height) {
+        if (this.pos.y - this.size > p.height) {
           this.pos.y = 0;
-        } else if (this.pos.y < 0) {
+        } else if (this.pos.y + this.size < 0) {
           this.pos.y = p.height;
         }
       }
@@ -160,11 +226,10 @@ new p5((p) => {
     // Draw logic here...
     // let mousePos = p.createVector(p.mouseX, p.mouseY)
 
-    randomX = p.noise(tx)
-    randomY = p.noise(ty)
-    let newThrust = p.createVector(randomX, randomY).mult(mover.accel)
-    mover.accel = p5.Vector.random2D()
-    mover.accel.mult(p.random(randomX))
+    randomX = p.noise(tx * noiseScale) * p.random(-1, 1)
+    randomY = p.noise(ty * noiseScale) * p.random(-1, 1)
+    mover.accel = p.createVector(randomX, randomY)
+    mover.accel.mult(p.noise(tm * noiseScale))
     tx += 0.01
     ty += 0.01
     mover.update()
@@ -189,7 +254,6 @@ new p5((p) => {
 
 }, sketches)
 
-
 // bouncing ball with choosing the start launch direction and speed
 new p5((p) => { // p - processing in-built functions
   let hasBeenStarted = false
@@ -200,7 +264,7 @@ new p5((p) => { // p - processing in-built functions
   // Objects
   let ball;
 
-  function userInterface() {
+  function UI() {
     let sketchCell = p.createDiv()
     sketchCell.addClass('sketch')
     p.createCanvas(400, 400).parent(sketchCell) // 1:1 aspect ratio
@@ -238,7 +302,7 @@ new p5((p) => { // p - processing in-built functions
   }
 
   p.setup = () => {
-    userInterface()
+    UI()
 
     ball = {
       hasBeenLaunched: false,
@@ -334,8 +398,6 @@ new p5((p) => { // p - processing in-built functions
   };
 }, sketches)
 
-
-
 // sketch exploring vector subtraction
 new p5((p) => {
   let hasBeenStarted = false;
@@ -387,7 +449,6 @@ new p5((p) => {
   }
 
 }, sketches)
-
 
 // bouncing ball sketch to group related by using vectors
 new p5((p) => { // p - processing in-built functions
@@ -470,6 +531,125 @@ new p5((p) => { // p - processing in-built functions
   };
 }, sketches)
 
+// Prototypes (Classes)
+class Mover {
+  pos;
+  dir;
+  vel;
+  maxSpeed;
+  accel;
+  maxAccel;
+  size;
+
+  constructor(p) {
+    this.init(p)
+  }
+
+  // pass in p5 sketch in each method
+  init(p) {
+    this.pos = p.createVector(p.width/2, p.height/2)
+    this.vel = p.createVector(0, 0)
+    this.accel = p.createVector(0, 0)
+    this.maxSpeed = 5; // pixels per frame
+    this.maxAccel = 0.2; // pixels per frame ^ 2, add 0.1 to the current speed up to the max Speed
+    this.size = 50;
+  }
 
 
-// Helpers
+  update(p) {
+    this.vel.add(this.accel).limit(this.maxSpeed)
+    this.pos.add(this.vel)
+
+    // stop acceleration when at max speed, how to decelerate when approaching mouse?
+    if (this.vel.mag() >= this.maxSpeed) {
+      this.accel = p.createVector(0, 0)
+    }
+  }
+
+
+  show(p) {
+    p.push()
+    p.fill('mintcream')
+    p.noStroke()
+    p.circle(this.pos.x, this.pos.y, this.size)
+    p.pop()
+  }
+
+
+  checkEdges(p) {
+    if (this.pos.x - this.size/2 > p.width) {
+      this.pos.x = 0;
+    } else if (this.pos.x + this.size/2 < 0) {
+      this.pos.x = p.width;
+    }
+
+    if (this.pos.y - this.size > p.height) {
+      this.pos.y = 0;
+    } else if (this.pos.y + this.size < 0) {
+      this.pos.y = p.height;
+    }
+  }
+}
+
+
+class Canvas{
+  // start on play button
+  // input delay
+  // check for paused state
+  isInitiated = false;
+  isPaused = true;
+  #isInteractive = false;
+  // after x amount of frames, be able to interact, can use Frame per second, need the frame count of device
+  interactTimeout = 60;
+  timePassed = 0;
+
+  constructor(p) {
+    this.init(p)
+  }
+
+
+  init(p) { // resetting objects?
+    let sketch = p.createDiv()
+    sketch.addClass('sketch')
+    // parent the p5 canvas to div with class attribute 'sketch'
+    p.createCanvas(400, 400).parent(sketch) // 1:1 aspect ratio
+    this.createButtons(p, sketch)
+  }
+
+
+  createButtons(p, sketch) {
+    const controls = p.createDiv().parent(sketch)
+
+    const playButton = p.createButton("Play")
+    controls.child(playButton)
+    playButton.mousePressed(this.onPlayButtonPressed)
+
+    const pauseButton = p.createButton("Pause")
+    pauseButton.mousePressed(this.onPauseButtonPressed)
+    controls.child(pauseButton)
+  }
+
+
+  onPlayButtonPressed() {
+    this.isPaused = false
+    this.isInitiated = true
+  }
+
+  onPauseButtonPressed() {
+    this.isPaused = true
+  }
+
+  canInteract() {
+    if (this.#isInteractive) {
+      return true;
+    } else {
+      this.timePassed += 1 // add 1 every draw frame
+      if (this.timePassed > this.interactTimeout) {
+        this.#isInteractive = true
+        return this.#isInteractive
+      }
+    }
+  }
+}
+
+// Helper Functions

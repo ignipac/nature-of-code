@@ -16,9 +16,11 @@ new p5((p) => {
     const controls = p.createDiv().parent(sketchCell)
     const playButton = p.createButton("Play")
     const pauseButton = p.createButton("Pause")
+    const resetButton = p.createButton("Reset")
 
     controls.child(playButton)
     controls.child(pauseButton)
+    controls.child(resetButton)
 
     playButton.mousePressed(() => {
       hasBeenStarted = true
@@ -28,6 +30,8 @@ new p5((p) => {
     pauseButton.mousePressed(() => {
       isPaused = !isPaused
     })
+
+    resetButton.mousePressed(() => {})
   }
 
   p.setup = () => {
