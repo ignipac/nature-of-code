@@ -11,6 +11,6 @@ canvas {
 
 #sketches {
     display: grid;
-    grid-template-columns: repeat(2, 400px);
+    grid-template-columns: repeat(3, 400px);
     column-gap: 10px;
 }
