@@ -14,3 +14,11 @@ canvas {
     grid-template-columns: repeat(3, 400px);
     column-gap: 10px;
 }
+
+.control-buttons {
+    margin-left: 5px;
+}
+
+.control-buttons > button {
+    margin-left: 5px;
+}

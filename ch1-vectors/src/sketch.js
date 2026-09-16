@@ -503,6 +503,7 @@ new p5((p) => { // p - processing in-built functions
         p.stroke('white')
         p.strokeWeight(2)
       },
+      
       bounce: function () {
         let vel = p.createVector(this.dir.x * this.speed, this.dir.y * this.speed)
         this.pos.add(vel)
