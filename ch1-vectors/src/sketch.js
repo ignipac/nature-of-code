@@ -431,21 +431,21 @@ new p5((p) => {
 
     p.draw = () => {
       if (isPaused) return;
-  
+
       p.background(255) //white
       let mouse = p.createVector(p.mouseX, p.mouseY);
       let center = p.createVector(p.width / 2, p.height / 2)
-  
+
       // display changes
       p.stroke(0) // black
       p.strokeWeight(4)
       p.line(0, 0, center.x, center.y)
       p.line(0, 0, mouse.x, mouse.y);
-  
+
       mouse.sub(center)
       p.translate(center.x, center.y) // get local points from center of canvas
       p.line(0, 0, mouse.x, mouse.y)
-  
+
       if (!hasBeenStarted) {
         isPaused = true
       }
@@ -503,7 +503,7 @@ new p5((p) => { // p - processing in-built functions
         p.stroke('white')
         p.strokeWeight(2)
       },
-      
+
       bounce: function () {
         let vel = p.createVector(this.dir.x * this.speed, this.dir.y * this.speed)
         this.pos.add(vel)

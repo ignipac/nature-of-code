@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   margin: 0px;
   padding: 0px;
   background-color: lightgrey;
@@ -10,7 +11,7 @@ canvas {
 }
 
 #sketches {
-    display: grid;
-    grid-template-columns: repeat(2, 400px);
-    column-gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 400px);
+  column-gap: 10px;
 }
