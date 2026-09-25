@@ -82,10 +82,15 @@ new p5((p) => {
 
   p.mouseClicked = () => {
     let ball = new body2D(p);
+
     let launchPoint = p.createVector(p.width / 4, (7 * p.height) / 8);
     ball.pos = launchPoint;
+
     let lauchForce = p.createVector(1, -1);
     ball.applyForce(lauchForce);
+
+    // how to add rotation to the ball when launched and then make it go the op dir when in air?
+
     cannonBalls.push(ball);
   };
 }, sketches);
@@ -177,13 +182,16 @@ class body2D {
     this.vel = p.createVector(0, 0);
     this.rot = 0;
     this.rotVel = 0;
+    this.rotAccel = 0;
     this.size = 30;
   }
 
   render(p) {
     p.push();
+    p.rotate(this.rot, [1, 0, 0]);
     p.fill(130);
     p.circle(this.pos.x, this.pos.y, this.size);
+    p.line(this.pos.x, this.pos.y, this.pos.x + this.size / 2, this.pos.y);
     p.pop();
   }
 
@@ -192,7 +200,7 @@ class body2D {
     this.pos.add(this.vel);
     this.accel.mult(0);
 
-    if (this.rotVel === 0) return;
+    console.log(this.rot, this.rotVel, this.rotAccel);
     this.rot += this.rotVel;
     this.rotVel += this.rotAccel;
     this.rotAccel = p.constrain(this.rotVel, -0.1, 0.1);
