@@ -2,6 +2,155 @@ import p5 from "p5";
 
 const sketches = document.getElementById("sketches");
 
+// Spiral
+new p5((p) => {
+  let isPaused = true;
+
+  let r;
+  let theta;
+  let elapsedTime = 0;
+
+  function createButtons(div) {
+    const buttons = p.createDiv().parent(div);
+    buttons.addClass("control-buttons");
+
+    const playButton = p.createButton("Play");
+    buttons.child(playButton);
+    playButton.mousePressed(() => {
+      isPaused = false;
+    });
+
+    const pauseButton = p.createButton("Pause");
+    buttons.child(pauseButton);
+    pauseButton.mousePressed(() => {
+      isPaused = true;
+    });
+  }
+
+  p.setup = () => {
+    let sketch = p.createDiv();
+    sketch.addClass("sketch");
+
+    // canvas with 1:1 aspect ratio, contained in sketch div
+    p.createCanvas(400, 400).parent(sketch);
+    createButtons(sketch);
+
+    // Initialize all values
+    r = 0;
+    theta = 0;
+
+    p.background(255);
+  };
+
+  p.draw = () => {
+    if (isPaused) return;
+    // p.background(255);
+
+    // Translate the origin point to the center of the screen
+    // Now how to make it rotate elsewhere?
+    p.translate(p.width / 2, p.height / 2);
+
+    // Convert polar to cartesian
+    let x = r * p.cos(theta);
+    let y = r * p.sin(theta);
+
+    elapsedTime += p.deltaTime / 1000; // in sec from milliseconds
+    if (elapsedTime > 10) {
+      return;
+    }
+
+    // Draw the ellipse at the cartesian coordinate
+    p.fill(127);
+    p.noStroke();
+    // p.line(0, 0, x, y);
+    p.circle(x, y, 16);
+
+    // Increase the angle over time
+    theta += 0.05;
+    r += 0.2;
+  };
+}, sketches);
+
+// PolarToCartesian
+new p5((p) => {
+  // Convert a polar coordinate (r,theta) to cartesian (x,y):
+  // x = r * cos(theta)
+  // y = r * sin(theta)
+
+  let isPaused = true;
+  let r;
+  let theta;
+  let spawnPoint;
+
+  function createButtons(div) {
+    const buttons = p.createDiv().parent(div);
+    buttons.addClass("control-buttons");
+
+    const playButton = p.createButton("Play");
+    buttons.child(playButton);
+    playButton.mousePressed(() => {
+      isPaused = false;
+    });
+
+    const pauseButton = p.createButton("Pause");
+    buttons.child(pauseButton);
+    pauseButton.mousePressed(() => {
+      isPaused = true;
+    });
+  }
+
+  p.setup = () => {
+    let sketch = p.createDiv();
+    sketch.addClass("sketch");
+
+    // canvas with 1:1 aspect ratio, contained in sketch div
+    p.createCanvas(400, 400).parent(sketch);
+    createButtons(sketch);
+
+    // Initialize all values
+    r = p.height * 0.4;
+    theta = 0;
+
+    p.background(255);
+    // Draw the ellipse at the cartesian coordinate
+    p.fill(127);
+    p.stroke(0);
+    p.strokeWeight(2);
+    spawnPoint = p.createVector(p.width / 2, p.height / 4);
+    p.translate(spawnPoint);
+    p.line(0, 0, spawnPoint.x, spawnPoint.y);
+    p.circle(spawnPoint.x, spawnPoint.y, 48);
+  };
+
+  p.draw = () => {
+    if (isPaused) return;
+    p.background(255);
+
+    // Translate the origin point to the center of the screen
+    // Now how to make it rotate elsewhere?
+    p.translate(spawnPoint);
+
+    // Convert polar to cartesian
+    let x = r * p.cos(theta);
+    let y = r * p.sin(theta);
+
+    // y = 0;
+    if (p.sin(theta) < 0) {
+      y = r * p.sin(-theta);
+    }
+
+    // Draw the ellipse at the cartesian coordinate
+    p.fill(127);
+    p.stroke(0);
+    p.strokeWeight(2);
+    p.line(0, 0, x, y);
+    p.circle(x, y, 48);
+
+    // Increase the angle over time
+    theta += 0.02;
+  };
+}, sketches);
+
 // launch a cannon ball
 new p5((p) => {
   let isPaused = false;
@@ -72,7 +221,7 @@ new p5((p) => {
 
         // interesting how this removes all the balls
         if (ball.pos.y >= p.height) {
-          console.log(ball.pos.y);
+          // console.log(ball.pos.y);
           let i = cannonBalls.indexOf(ball);
           cannonBalls.pop(cannonBalls[i]);
         }
@@ -188,7 +337,9 @@ class body2D {
 
   render(p) {
     p.push();
-    p.rotate(this.rot, [1, 0, 0]);
+    // p.translate(this.pos.x, this.pos.y);
+    // I do not get how to rotate around the obj centre position
+    p.rotate(this.rot);
     p.fill(130);
     p.circle(this.pos.x, this.pos.y, this.size);
     p.line(this.pos.x, this.pos.y, this.pos.x + this.size / 2, this.pos.y);
@@ -200,7 +351,7 @@ class body2D {
     this.pos.add(this.vel);
     this.accel.mult(0);
 
-    console.log(this.rot, this.rotVel, this.rotAccel);
+    // console.log(this.rot, this.rotVel, this.rotAccel);
     this.rot += this.rotVel;
     this.rotVel += this.rotAccel;
     this.rotAccel = p.constrain(this.rotVel, -0.1, 0.1);
