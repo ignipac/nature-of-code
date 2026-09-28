@@ -2,6 +2,99 @@ import p5 from "p5";
 
 const sketches = document.getElementById("sketches");
 
+ 
+
+new p5((p) => {
+  p.setup = () => {
+    let sketch = p.createDiv().addClass("sketch");
+    p.createCanvas(400, 400).parent(sketch);
+
+    p.background("white");
+  };
+
+  p.draw = () => {
+    // your code here
+  };
+}, sketches);
+
+// sketch of random angular velocity in x & direction
+new p5((p) => {
+  let isPaused = true;
+  let oscillators = [];
+  p.setup = () => {
+    let sketch = p.createDiv();
+    // canvas with 1:1 aspect ratio, contained in sketch div
+    p.createCanvas(400, 400).parent(sketch);
+    let playButton = p
+      .createButton("Toggle")
+      .parent(sketch)
+      .addClass("control-buttons");
+    playButton.mousePressed(() => {
+      isPaused = !isPaused;
+    });
+
+    p.background(255);
+
+    for (let i = 0; i < 10; i++) {
+      oscillators.push(new Oscillator(p));
+    }
+  };
+
+  p.draw = () => {
+    if (isPaused) return;
+    p.background(255);
+    // Run all objects
+    for (let i = 0; i < oscillators.length; i++) {
+      oscillators[i].update(p);
+      oscillators[i].show(p);
+    }
+  };
+}, sketches);
+
+// using oscillation props to modify object properties
+new p5((p) => {
+  let isPaused = true;
+  let elapsedTime = 0;
+
+  p.setup = () => {
+    let sketch = p.createDiv();
+    sketch.addClass("sketch");
+    // canvas with 1:1 aspect ratio, contained in sketch div
+    p.createCanvas(400, 400).parent(sketch);
+    let playButton = p
+      .createButton("Toggle")
+      .parent(sketch)
+      .addClass("control-buttons");
+    playButton.mousePressed(() => {
+      isPaused = !isPaused;
+    });
+
+    p.background(255);
+    p.stroke(0);
+    p.fill(127);
+    p.translate(p.width / 2, p.height / 2);
+    p.line(0, 0, 10, 0);
+    p.circle(10, 0, 48);
+  };
+
+  p.draw = () => {
+    if (isPaused) return;
+    p.background(255);
+    let period = 240;
+    let amplitude = 100;
+    //Calculate the horizontal position according to the formula for simple harmonic motion.
+    // Framecount is unreliable when pause and play as it is always changing, attached to the p5 lib
+    elapsedTime += p.deltaTime * 0.1;
+    let x = amplitude * p.sin((p.PI * elapsedTime) / period);
+
+    p.stroke(0);
+    p.fill(127);
+    p.translate(p.width / 2, p.height / 2);
+    p.line(0, 0, x, 0);
+    p.circle(x, 0, 48);
+  };
+}, sketches);
+
 // Spiral
 new p5((p) => {
   let isPaused = true;
@@ -153,7 +246,7 @@ new p5((p) => {
 
 // launch a cannon ball
 new p5((p) => {
-  let isPaused = false;
+  let isPaused = true;
   let cannonBalls = [];
 
   let center;
@@ -360,5 +453,47 @@ class body2D {
   applyForce(force) {
     let f = force.copy();
     this.accel.add(f);
+  }
+}
+
+class Oscillator {
+  angle;
+  angleVelocity;
+  amplitude;
+
+  constructor(p) {
+    this.random(p);
+  }
+
+  init(p) {}
+
+  random(p) {
+    this.angle = p.createVector(0, 0);
+    this.angleVelocity = p.createVector(
+      p.random(-0.05, 0.05),
+      p.random(-0.05, 0.05),
+    );
+    this.amplitude = p.createVector(
+      p.random(20, p.width / 2),
+      p.random(20, p.height / 2),
+    );
+  }
+
+  update(p) {
+    this.angle.add(this.angleVelocity);
+  }
+
+  show(p) {
+    let x = p.sin(this.angle.x) * this.amplitude.x;
+    let y = p.sin(this.angle.y) * this.amplitude.y;
+
+    p.push();
+    p.translate(p.width / 2, p.height / 2);
+    p.stroke(0);
+    p.strokeWeight(2);
+    p.fill(127);
+    p.line(0, 0, x, y);
+    p.circle(x, y, 32);
+    p.pop();
   }
 }

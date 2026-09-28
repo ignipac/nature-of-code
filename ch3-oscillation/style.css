@@ -12,8 +12,8 @@ canvas {
 
 #sketches {
   display: grid;
-  grid-template-columns: repeat(3, 400px);
-  column-gap: 10px;
+  grid-template-columns: repeat(4, 400px);
+  column-gap: 80px;
 }
 
 .control-buttons {

@@ -1,4 +1,5 @@
 // ----- Creative Code Project -----
+// Test area for singular entity to make into a class?
 import p5 from 'p5'
 import * as h from './helper'
 
