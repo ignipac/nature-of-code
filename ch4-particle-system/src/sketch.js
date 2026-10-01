@@ -2,28 +2,7 @@ import p5 from "p5";
 
 const sketches = document.getElementById("sketches");
 
-new p5((p) => {
-  let isPaused = true;
-  p.setup = () => {
-    let sketch = p.createDiv().addClass("sketch");
-    p.createCanvas(400, 400).parent(sketch);
-
-    let playButton = p
-      .createButton("Toggle Sketch")
-      .parent(sketch)
-      .addClass("control-buttons");
-    playButton.mousePressed(() => {
-      isPaused = !isPaused;
-    });
-
-    p.background("white");
-  };
-
-  p.draw = () => {
-    if (isPaused) return;
-  };
-});
-
+// emits particles at mouse position
 new p5((p) => {
   let isPaused = true;
   let emitter;
@@ -152,12 +131,19 @@ class Emitter {
   }
 
   addParticle() {
-    let newParticle = new Particle(this.p5, this.position.x, this.position.y);
-    newParticle.velocity = this.p5.createVector(
+    // pass in the type of particle to emit
+    let particle;
+    let r = this.p5.random(1);
+    if (r < 0.5) {
+      particle = new Particle(this.p5, this.position.x, this.position.y);
+    } else {
+      particle = new Confetti(this.p5, this.position.x, this.position.y);
+    }
+    particle.velocity = this.p5.createVector(
       this.p5.random(-1, 1),
       this.p5.random(-1, 0),
     );
-    this.particles.push(newParticle);
+    this.particles.push(particle);
   }
 
   run() {
@@ -171,3 +157,21 @@ class Emitter {
 }
 
 class EmitterSystem {}
+
+class Confetti extends Particle {
+  constructor(p, x, y) {
+    super(p, x, y);
+  }
+
+  show() {
+    const p = this.p5;
+    let angle = p.map(this.position.x, 0, p.width, 0, p.TWO_PI * 2);
+    p.push();
+    p.fill(0);
+    p.translate(this.position.x, this.position.y);
+    p.rotate(angle);
+    p.rectMode(p.CENTER);
+    p.square(0, 0, 16);
+    p.pop();
+  }
+}
