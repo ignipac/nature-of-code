@@ -44,6 +44,25 @@ new p5((p) => {
 
   p.draw = () => {
     if (isPaused) return;
+    p.background(255);
+    // Display the flowfield in "debug" mode
+    if (debug) flowfield.show();
+    // Tell all the vehicles to follow the flow field
+    for (let i = 0; i < vehicles.length; i++) {
+      vehicles[i].follow(flowfield);
+      vehicles[i].run();
+    }
+  };
+
+  p.keyPressed = () => {
+    if (key == " ") {
+      debug = !debug;
+    }
+  };
+
+  // Make a new flowfield
+  p.mousePressed = () => {
+    flowfield.init();
   };
 }, sketches);
 
@@ -176,6 +195,12 @@ class Vehicle {
     this.p5 = p;
   }
 
+  run() {
+    this.update();
+    this.wrapAround();
+    this.show();
+  }
+
   // Method to update location
   update() {
     // Update velocity
@@ -236,6 +261,17 @@ class Vehicle {
 
     this.applyForce(steer);
     this.wrapAround();
+  }
+
+  follow(flow) {
+    // What is the vector at that spot in the flow field?
+    let desired = flow.lookup(this.position);
+    // Scale it up by maxspeed
+    desired.mult(this.maxspeed);
+    // Steering is desired minus velocity
+    let steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxforce); // Limit to maximum steering force
+    this.applyForce(steer);
   }
 
   wander() {
@@ -363,12 +399,17 @@ class FlowField {
 
   //{.code-wide} A function to return a p5.Vector based on a position
   lookup(position) {
-    let column = constrain(
-      floor(position.x / this.resolution),
+    let p = this.p5;
+    let column = p.constrain(
+      p.floor(position.x / this.resolution),
       0,
       this.cols - 1,
     );
-    let row = constrain(floor(position.y / this.resolution), 0, this.rows - 1);
+    let row = p.constrain(
+      p.floor(position.y / this.resolution),
+      0,
+      this.rows - 1,
+    );
     return this.field[column][row].copy();
   }
 }
