@@ -2,6 +2,7 @@ import p5 from "p5";
 
 const sketches = document.getElementById("sketches");
 
+// Flow Field Following
 new p5((p) => {
   let isPaused = true;
   // Using this variable to decide whether to draw all the stuff
@@ -54,8 +55,8 @@ new p5((p) => {
     }
   };
 
-  p.keyPressed = () => {
-    if (key == " ") {
+  p.keyPressed = (e) => {
+    if (e.key == " ") {
       debug = !debug;
     }
   };
@@ -183,6 +184,7 @@ new p5((p) => {
   };
 }, sketches);
 
+// A entity with transform properties
 class Vehicle {
   constructor(p, x, y) {
     this.position = p.createVector(x, y);
