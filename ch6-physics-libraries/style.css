@@ -1,0 +1,25 @@
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+  background-color: lightgrey;
+}
+
+canvas {
+  display: block;
+  padding: 10px;
+}
+
+#sketches {
+  display: grid;
+  grid-template-columns: repeat(4, 400px);
+  column-gap: 80px;
+}
+
+.control-buttons {
+  margin-left: 5px;
+}
+
+.control-buttons>button {
+  margin-left: 5px;
+}
