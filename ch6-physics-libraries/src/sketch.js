@@ -3,13 +3,45 @@ import Matter from "matter-js";
 
 const sketches = document.getElementById("sketches");
 
-console.log(Matter.Vector.create(1, -1));
+// console.log(Matter.Vector.create(1, -1));
 
 const { Engine, Vector, Body, Bodies, Composite, Render } = Matter;
 
 let isExploringMatter = false;
 let engine;
 
+// Groups of Shapes
+new p5((p) => {
+  let isPaused = true;
+  p.setup = () => {
+    let sketch = p.createDiv().addClass("sketch");
+    let canvas = p.createCanvas(400, 400).parent(sketch);
+
+    let playButton = p
+      .createButton("Toggle Sketch")
+      .parent(sketch)
+      .addClass("control-buttons");
+    playButton.mousePressed(() => {
+      isPaused = !isPaused;
+    });
+
+    p.background("white");
+
+    // Create engine for matter.js
+    engine = Engine.create();
+
+    let ball = new PhysicsBody();
+    ball.setCollisionShape("circle");
+    console.log(ball.getCollisionShape());
+  };
+
+  p.draw = () => {
+    if (isPaused) return;
+    Engine.update(engine);
+  };
+}, sketches);
+
+// Click to add boxes, and they will fall and collide with the boundaries.
 new p5((p) => {
   let isPaused = false;
 
@@ -73,6 +105,7 @@ new p5((p) => {
 }, sketches);
 
 if (isExploringMatter) {
+  // A simple sketch to explore Matter.js
   new p5((p) => {
     let isPaused = true;
 
@@ -188,5 +221,17 @@ class Boundary {
     p.stroke(0);
     p.strokeWeight(2);
     p.rect(this.x, this.y, this.w, this.h);
+  }
+}
+
+class PhysicsBody {
+  constructor() {}
+
+  setCollisionShape(shape) {
+    this.shape = shape;
+  }
+
+  getCollisionShape() {
+    return this.shape;
   }
 }
